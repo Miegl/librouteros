@@ -42,6 +42,7 @@
 static const char *opt_username = "admin";
 static int opt_receive_timeout = 0;
 static int opt_connect_timeout = 0;
+statis int ros_reply_count = 0;
 
 static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 		void *user_data)
@@ -49,9 +50,17 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 	unsigned int i;
 
 	if (r == NULL)
+		printf ("]");
 		return (0);
 
-	printf ("Status: %s\n", ros_reply_status (r));
+	if (ros_reply_count == 0)
+		printf ("[");
+	else
+		printf (",");
+		
+	ros_reply_count++;
+	
+	printf ("{");
 
 	for (i = 0; /* true */; i++)
 	{
@@ -61,19 +70,18 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 		key = ros_reply_param_key_by_index (r, i);
 		val = ros_reply_param_val_by_index (r, i);
 
-		if ((key == NULL) || (val == NULL))
+		if (key == NULL)
 		{
-			if (key != NULL)
-				fprintf (stderr, "val is NULL but key is %s!\n", key);
-			if (val != NULL)
-				fprintf (stderr, "key is NULL but val is %s!\n", val);
 			break;
 		}
-
-		printf ("  Param %u: %s = %s\n", i, key, val);
+		
+		if (i != 0)
+			printf (",");
+		
+		printf ("\"%s\":\"%s\"", key, val);
 	}
 
-	printf ("===\n");
+	printf ("}");
 
 	return (result_handler (c, ros_reply_next (r), user_data));
 } /* }}} int result_handler */
@@ -301,6 +309,7 @@ static void exit_usage (void) /* {{{ */
 			"\n"
 			"OPTIONS:\n"
 			"  -u <user>       Use <user> to authenticate (optional, default: admin).\n"
+			"  -p <password>   Set the password.\n"
 			"  -t <timeout>    Set receive timeout in seconds.\n"
 			"  -c <timeout>    Set connect timeout in seconds.\n"
 			"  -h              Display this help message.\n"
@@ -324,12 +333,15 @@ int main (int argc, char **argv) /* {{{ */
 
 	int option;
 
-	while ((option = getopt (argc, argv, "u:t:c:h?")) != -1)
+	while ((option = getopt (argc, argv, "u:p:t:c:h?")) != -1)
 	{
 		switch (option)
 		{
 			case 'u':
 				opt_username = optarg;
+				break;
+			case 'p':
+				passwd = optarg;
 				break;
 			case 't':
 				opt_receive_timeout = atoi(optarg);
@@ -351,8 +363,10 @@ int main (int argc, char **argv) /* {{{ */
 
 	host = argv[optind];
 	command = argv[optind+1];
-
-	passwd = read_password ();
+	
+	if (passwd == NULL)
+		passwd = read_password ();
+	
 	if (passwd == NULL)
 		exit (EXIT_FAILURE);
 
