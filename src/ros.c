@@ -42,7 +42,7 @@
 static const char *opt_username = "admin";
 static int opt_receive_timeout = 0;
 static int opt_connect_timeout = 0;
-statis int ros_reply_count = 0;
+static int ros_reply_count = 0;
 
 static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 		void *user_data)
