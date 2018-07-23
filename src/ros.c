@@ -55,6 +55,7 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 	}
 
 	if (strcmp (ros_reply_status (r), "done") == 0) {
+		printf ("]");
 		return (0);
 	}
 	
