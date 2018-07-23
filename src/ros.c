@@ -54,6 +54,10 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 		return (0);
 	}
 
+	if (strcmp (ros_reply_status (r), "done") == 0) {
+		return (0);
+	}
+	
 	if (ros_reply_count == 0) {
 		printf ("[");
 	} else {
@@ -61,10 +65,6 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 	}
 		
 	ros_reply_count++;
-	
-	if (strcmp (ros_reply_status (r), "done") == 0) {
-		return (0);
-	}
 	
 	printf ("{");
 
