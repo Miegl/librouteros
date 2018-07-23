@@ -49,14 +49,16 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 {
 	unsigned int i;
 
-	if (r == NULL)
+	if (r == NULL) {
 		printf ("]");
 		return (0);
+	}
 
-	if (ros_reply_count == 0)
+	if (ros_reply_count == 0) {
 		printf ("[");
-	else
+	} else {
 		printf (",");
+	}
 		
 	ros_reply_count++;
 	
@@ -75,8 +77,9 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 			break;
 		}
 		
-		if (i != 0)
+		if (i != 0) {
 			printf (",");
+		}
 		
 		printf ("\"%s\":\"%s\"", key, val);
 	}
@@ -327,7 +330,7 @@ static void exit_usage (void) /* {{{ */
 int main (int argc, char **argv) /* {{{ */
 {
 	ros_connection_t *c;
-	char *passwd;
+	char *passwd = NULL;
 	const char *host;
 	const char *command;
 
