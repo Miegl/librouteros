@@ -62,6 +62,10 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 		
 	ros_reply_count++;
 	
+	if (ros_reply_status (r) == "done") {
+		return (0);
+	}
+	
 	printf ("{");
 
 	for (i = 0; /* true */; i++)
