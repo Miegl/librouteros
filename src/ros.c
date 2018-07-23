@@ -50,12 +50,16 @@ static int result_handler (ros_connection_t *c, const ros_reply_t *r, /* {{{ */
 	unsigned int i;
 
 	if (r == NULL) {
-		printf ("]");
+		if (ros_reply_count != 0) {
+			printf ("]");
+		}
 		return (0);
 	}
 
 	if (strcmp (ros_reply_status (r), "done") == 0) {
-		printf ("]");
+		if (ros_reply_count != 0) {
+			printf ("]");
+		}
 		return (0);
 	}
 	
